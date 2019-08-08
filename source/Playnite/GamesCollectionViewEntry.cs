@@ -50,6 +50,7 @@ namespace Playnite
         public bool IsLaunching => Game.IsLaunching;
         public bool IsRunning => Game.IsRunning;
         public bool IsCustomGame => Game.IsCustomGame;
+        public bool IsStoreItem => Game.IsStoreItem;
         public long Playtime => Game.Playtime;
         public DateTime? Added => Game.Added;
         public DateTime? Modified => Game.Modified;

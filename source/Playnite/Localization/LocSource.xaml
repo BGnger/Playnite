@@ -662,6 +662,9 @@ You can try these to fix the issue:
     <sys:String x:Key="LOCSetGameCategory">Set Category…</sys:String>
     <sys:String x:Key="LOCRemoveGame">Remove</sys:String>
     <sys:String x:Key="LOCPlayGame">Play</sys:String>
+    <sys:String x:Key="LOCBuyGameShort">Buy</sys:String>
+    <sys:String x:Key="LOCBuyGameLong">Buy on</sys:String>
+    <sys:String x:Key="LOCBuyGamePrice">for</sys:String>
     <sys:String x:Key="LOCInstallGame">Install</sys:String>
     <sys:String x:Key="LOCGameOptions">Options</sys:String>
     <sys:String x:Key="LOCGameDetails">Details</sys:String>

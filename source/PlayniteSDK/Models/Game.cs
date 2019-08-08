@@ -74,6 +74,8 @@ namespace Playnite.SDK.Models
         IsInstalled,
         /// 
         IsCustomGame,
+        ///
+        isStoreItem,
         /// 
         Playtime,
         /// 
@@ -607,6 +609,20 @@ namespace Playnite.SDK.Models
             set
             {
                 isInstalled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool isStoreItem;
+        /// <summary>
+        /// Gets or sets value indicating wheter a game is a online store item.
+        /// </summary>
+        public bool IsStoreItem
+        {
+            get => isStoreItem;
+            set
+            {
+                isStoreItem = value;
                 OnPropertyChanged();
             }
         }

@@ -132,6 +132,32 @@ namespace Playnite.SDK.Models
             }
         }
 
+        private string store;
+        /// <summary>
+        /// Gets or sets the store name.
+        /// </summary>
+        public string Store
+        {
+            get => store;
+            set
+            {
+                store = value;
+                OnPropertyChanged();
+            }
+        }
+        private float price;
+        /// <summary>
+        /// Gets or sets the store name.
+        /// </summary>
+        public float Price
+        {
+            get => price;
+            set
+            {
+                price = value;
+                OnPropertyChanged();
+            }
+        }
         private bool isHandledByPlugin;
         /// <summary>
         /// Gets or sets value indicating wheter a action's execution should be handled by a plugin.

@@ -134,7 +134,10 @@ namespace Playnite.DesktopApp.ViewModels
                 {
                     return resources.GetString("LOCPlayGame");
                 }
-
+                else if (Game?.IsStoreItem == true)
+                {
+                    return resources.GetString("LOCBuy");
+                }
                 return "<ErrorState>";
             }
         }

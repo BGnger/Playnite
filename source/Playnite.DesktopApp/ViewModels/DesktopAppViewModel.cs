@@ -324,6 +324,7 @@ namespace Playnite.DesktopApp.ViewModels
         #region Game Commands
         public RelayCommand<Game> StartGameCommand { get; private set; }
         public RelayCommand<Game> InstallGameCommand { get; private set; }
+        public RelayCommand<Game> BuyGameCommand { get; private set; }
         public RelayCommand<Game> UninstallGameCommand { get; private set; }
         public RelayCommand<object> StartSelectedGameCommand { get; private set; }
         public RelayCommand<object> EditSelectedGamesCommand { get; private set; }
@@ -634,6 +635,19 @@ namespace Playnite.DesktopApp.ViewModels
                     GamesEditor.InstallGame(SelectedGame.Game);
                 }
             });
+
+            BuyGameCommand = new RelayCommand<Game>((game) =>
+            {
+                if (game != null)
+                {
+                    GamesEditor.BuyGame(game);
+                }
+                else if (SelectedGame != null)
+                {
+                    GamesEditor.BuyGame(SelectedGame.Game);
+                }
+            });
+
 
             UninstallGameCommand = new RelayCommand<Game>((game) =>
             {
@@ -1204,24 +1218,34 @@ namespace Playnite.DesktopApp.ViewModels
 
         public void SelectGame(Guid id)
         {
+            Database.Games.Remove(Database.Games.Where(G => G.Name == "Test Game"));
             var viewEntry = GamesView.Items.FirstOrDefault(a => a.Game.Id == id);
             Game game = new Game("Test Game");
             game.Description = "Testing";
             game.CoverImage = "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/SuperMarioGalaxy.jpg/220px-SuperMarioGalaxy.jpg";
             game.BackgroundImage = "https://staticr1.blastingcdn.com/media/photogallery/2018/2/3/660x290/b_502x220/the-best-title-screens-in-gaming-image-credit-youtubeskg-20_1829387.jpg";
             GameAction gameAction = new GameAction();
-            gameAction.Name = "Buy";
+            gameAction.Store = "Steam";
+            gameAction.Price = 19.99f;
             gameAction.Type = GameActionType.URL;
             gameAction.Path = "https://store.steampowered.com/app/726830/Vacation_Simulator/";
             game.PlayAction = gameAction;
-            game.IsInstalled = true;
+            
+            game.IsStoreItem = true;
             Database.Games.Add(game);
             game.OtherActions = new ObservableCollection<GameAction>
             {
-                gameAction
+                new GameAction
+                {
+                    Store= "Uplay",
+                    Price = 29.99f,
+                    Type = GameActionType.URL,
+                    Path = "https://store.ubi.com/us/watch-dogs-legion-ultimate-edition/5cec2d9939798c0870c0769a.html?lang=en"
+                }
             };
             GamesCollectionViewEntry gcve = new GamesCollectionViewEntry(game, null, null);
             SelectedGame = gcve;
+            
         }
 
         protected virtual void OnClosing(CancelEventArgs args)

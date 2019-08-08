@@ -66,6 +66,8 @@ namespace Playnite.DesktopApp.Controls
         private static object shortcutIcon;
         private static object installIcon;
         private static object editIcon;
+        private static object buyIcon;
+
 
         public Game Game
         {
@@ -91,6 +93,7 @@ namespace Playnite.DesktopApp.Controls
             shortcutIcon = GetIcon("DesktopShortcutIcon");
             installIcon = GetIcon("InstallIcon");
             editIcon = GetIcon("EditGameIcon");
+            buyIcon = GetIcon("BuyIcon");
         }
 
         public GameMenu() : this(DesktopApplication.Current?.MainModel)
@@ -222,6 +225,8 @@ namespace Playnite.DesktopApp.Controls
                 };
 
                 Items.Add(unFavoriteItem);
+                
+                
 
                 // Set Hide
                 var hideItem = new MenuItem()
@@ -282,7 +287,7 @@ namespace Playnite.DesktopApp.Controls
             }
             else if (Game != null)
             {
-                // Play / Install
+                // Play / Install / Buy
                 if (ShowStartSection)
                 {
                     bool added = false;
@@ -301,6 +306,20 @@ namespace Playnite.DesktopApp.Controls
                         Items.Add(playItem);
                         added = true;
                     }
+                    else if (Game.IsStoreItem)
+                    {
+                        var installItem = new MenuItem()
+                        {
+                            Header = resources.GetString("LOCBuyGame") + " from " + Game.PlayAction.Store + " for $" + Game.PlayAction.Price,
+                            Icon = buyIcon,
+                            FontWeight = FontWeights.Bold,
+                            Command = model.BuyGameCommand,
+                            CommandParameter = Game
+                        };
+
+                        Items.Add(installItem);
+                        added = true;
+                    }
                     else if (!Game.IsCustomGame)
                     {
                         var installItem = new MenuItem()
@@ -315,7 +334,6 @@ namespace Playnite.DesktopApp.Controls
                         Items.Add(installItem);
                         added = true;
                     }
-
                     if (added)
                     {
                         Items.Add(new Separator());
@@ -327,11 +345,18 @@ namespace Playnite.DesktopApp.Controls
                 {
                     foreach (var task in Game.OtherActions)
                     {
+
                         var taskItem = new MenuItem()
                         {
+
                             Header = task.Name,
                             //Icon = Images.GetEmptyImage()
                         };
+
+                        if (Game.IsStoreItem)
+                        {
+                            taskItem.Header = resources.GetString("LOCBuyGameLong") + task.Store + resources.GetString("LOCBuyGamePrice") + " $" + task.Price;
+                        }
 
                         taskItem.Click += (s, e) =>
                         {
@@ -403,6 +428,8 @@ namespace Playnite.DesktopApp.Controls
                 };
 
                 Items.Add(favoriteItem);
+                if (!Game.IsStoreItem)
+                {
 
                 // Toggle Hide
                 var hideItem = new MenuItem()
@@ -463,6 +490,7 @@ namespace Playnite.DesktopApp.Controls
                     };
 
                     Items.Add(uninstallItem);
+                }
                 }
             }
         }

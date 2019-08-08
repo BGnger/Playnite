@@ -331,6 +331,13 @@ namespace Playnite
             }
         }
 
+        public void BuyGame(Game game)
+        {
+            logger.Info($"Going to {game.GetIdentifierInfo()} store page");
+            ProcessStarter.StartUrl(game.PlayAction.Path);
+        }
+
+
         public void InstallGame(Game game)
         {
             logger.Info($"Installing {game.GetIdentifierInfo()}");
