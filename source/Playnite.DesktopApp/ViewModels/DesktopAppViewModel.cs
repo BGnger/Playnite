@@ -1205,7 +1205,23 @@ namespace Playnite.DesktopApp.ViewModels
         public void SelectGame(Guid id)
         {
             var viewEntry = GamesView.Items.FirstOrDefault(a => a.Game.Id == id);
-            SelectedGame = viewEntry;
+            Game game = new Game("Test Game");
+            game.Description = "Testing";
+            game.CoverImage = "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/SuperMarioGalaxy.jpg/220px-SuperMarioGalaxy.jpg";
+            game.BackgroundImage = "https://staticr1.blastingcdn.com/media/photogallery/2018/2/3/660x290/b_502x220/the-best-title-screens-in-gaming-image-credit-youtubeskg-20_1829387.jpg";
+            GameAction gameAction = new GameAction();
+            gameAction.Name = "Buy";
+            gameAction.Type = GameActionType.URL;
+            gameAction.Path = "https://store.steampowered.com/app/726830/Vacation_Simulator/";
+            game.PlayAction = gameAction;
+            game.IsInstalled = true;
+            Database.Games.Add(game);
+            game.OtherActions = new ObservableCollection<GameAction>
+            {
+                gameAction
+            };
+            GamesCollectionViewEntry gcve = new GamesCollectionViewEntry(game, null, null);
+            SelectedGame = gcve;
         }
 
         protected virtual void OnClosing(CancelEventArgs args)
