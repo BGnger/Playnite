@@ -145,11 +145,11 @@ namespace Playnite.SDK.Models
                 OnPropertyChanged();
             }
         }
-        private float price;
+        private string price;
         /// <summary>
         /// Gets or sets the store name.
         /// </summary>
-        public float Price
+        public string Price
         {
             get => price;
             set

@@ -310,7 +310,7 @@ namespace Playnite.DesktopApp.Controls
                     {
                         var installItem = new MenuItem()
                         {
-                            Header = resources.GetString("LOCBuyGame") + " from " + Game.PlayAction.Store + " for $" + Game.PlayAction.Price,
+                            Header = $"{resources.GetString("LOCBuyGameLong")} {Game.PlayAction.Store} {resources.GetString("LOCBuyGamePrice")} {Game.PlayAction.Price}",
                             Icon = buyIcon,
                             FontWeight = FontWeights.Bold,
                             Command = model.BuyGameCommand,
@@ -355,7 +355,7 @@ namespace Playnite.DesktopApp.Controls
 
                         if (Game.IsStoreItem)
                         {
-                            taskItem.Header = resources.GetString("LOCBuyGameLong") + task.Store + resources.GetString("LOCBuyGamePrice") + " $" + task.Price;
+                            taskItem.Header = $"{resources.GetString("LOCBuyGameLong")} {task.Store} {resources.GetString("LOCBuyGamePrice")} {task.Price}";
                         }
 
                         taskItem.Click += (s, e) =>

@@ -126,6 +126,10 @@ namespace Playnite.DesktopApp.ViewModels
                 {
                     return resources.GetString("LOCUninstalling");
                 }
+                else if (Game?.IsStoreItem == true)
+                {
+                    return $"{resources.GetString("LOCBuyGameLong")} {Game.PlayAction.Store} {resources.GetString("LOCBuyGamePrice")} {Game.PlayAction.Price}";
+                }
                 else if (Game?.IsInstalled == false)
                 {
                     return resources.GetString("LOCInstallGame");
@@ -133,10 +137,6 @@ namespace Playnite.DesktopApp.ViewModels
                 else if (Game?.IsInstalled == true)
                 {
                     return resources.GetString("LOCPlayGame");
-                }
-                else if (Game?.IsStoreItem == true)
-                {
-                    return resources.GetString("LOCBuy");
                 }
                 return "<ErrorState>";
             }
