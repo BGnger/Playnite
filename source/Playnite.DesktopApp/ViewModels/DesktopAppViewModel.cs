@@ -1221,89 +1221,10 @@ namespace Playnite.DesktopApp.ViewModels
 
         public void SelectGame(Guid id)
         {
-            Database.Games.Remove(Database.Games.Where(G => G.Name == "Test Game"));
             var viewEntry = GamesView.Items.FirstOrDefault(a => a.Game.Id == id);
-            Game game = new Game("Test Game");
-            game.Description = "Testing";
-            game.CoverImage = "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/SuperMarioGalaxy.jpg/220px-SuperMarioGalaxy.jpg";
-            game.BackgroundImage = "https://staticr1.blastingcdn.com/media/photogallery/2018/2/3/660x290/b_502x220/the-best-title-screens-in-gaming-image-credit-youtubeskg-20_1829387.jpg";
-            GameAction gameAction = new GameAction();
-            gameAction.Store = "Steam";
-            gameAction.Type = GameActionType.URL;
-            gameAction.Path = "https://store.steampowered.com/app/298110/Far_Cry_4/";
-            game.PlayAction = gameAction;
-
-            var url = @"https://store.steampowered.com/app/298110/Far_Cry_4/";
-            var htmlDoc = new HtmlDocument();
-            HtmlWeb web = new HtmlWeb();
-            var html = getSteamPrice(url);
-            htmlDoc.LoadHtml(html);
-            var node = htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\"game_area_purchase\"]/div[1]/div/div[2]/div/div[1]");
-            var price = ((node.InnerText).Replace("\t","").Replace("\n","").Substring(1));
-            gameAction.Price = price;
-            var temphtml = new HtmlDocument();
-            temphtml.LoadHtml(getSteamPrice("https://store.ubi.com/us/far-cry-4/56c4947a88a7e300458b45e2.html?lang=en_US"));
-            var parsed = temphtml.ParsedText;
-            htmlDoc.LoadHtml(parsed);
-
-            //htmlDoc.LoadHtml("https://store.ubi.com/us/far-cry-4/56c4947a88a7e300458b45e2.html?lang=en_US");
-            ////*[@id="dwfrm_product_addtocart_d0dmkxybdrie"]/fieldset/div/div/div[1]/div/span[1]
-            ////*[@id="dwfrm_product_addtocart_d0zxbcmtmjzn"]/fieldset/div/div/div[1]/div/span[1]
-            ////*[@id="dwfrm_product_addtocart_d0hrycqliysb"]/fieldset/div/div/div[1]/div/span[1]
-            var nodes = htmlDoc.DocumentNode.Descendants("fieldset");
-            var form = nodes.Skip(1).First();
-
-
-            game.IsStoreItem = true;
-            game.IsInstalled = false;
-
-            Database.Games.Add(game);
-            game.OtherActions = new ObservableCollection<GameAction>
-            {
-                new GameAction
-                {
-                    Store= "Uplay",
-                    Type = GameActionType.URL,
-                    Path = "https://store.ubi.com/us/far-cry-4/56c4947a88a7e300458b45e2.html?lang=en_US",
-                    //Price = form.SelectSingleNode("fieldset/div/div/div[1]/div/span[1]").InnerHtml
-                    Price = "$29.99"
-        }
-            };
-            game.OtherActions.First().Price = (node.InnerText);
-
-            GamesCollectionViewEntry gcve = new GamesCollectionViewEntry(game, null, null);
-            SelectedGame = gcve;
-
-
-
-            //GameDatabase.GenerateSampleData(Database);
-
-
+            SelectedGame = viewEntry;
         }
 
-        private string getSteamPrice(string url)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            Cookie cookie = new Cookie("birthtime", "568022401")
-            {
-                Domain = new Uri("http://store.steampowered.com/").Host
-            };
-            CookieContainer cc = new CookieContainer();
-            cc.Add(cookie);
-            request.CookieContainer = cc;
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            var stream = response.GetResponseStream();
-            using (var reader = new StreamReader(stream))
-            {
-                string html = reader.ReadToEnd();
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
-                return doc.Text;
-            }
-        }
-    
 
         protected virtual void OnClosing(CancelEventArgs args)
         {
