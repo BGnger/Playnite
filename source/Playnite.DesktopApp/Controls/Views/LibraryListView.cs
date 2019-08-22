@@ -12,7 +12,7 @@ using System.Windows.Data;
 
 namespace Playnite.DesktopApp.Controls.Views
 {
-    [TemplatePart(Name = "PART_ListGames", Type = typeof(GamesGridView))]
+    [TemplatePart(Name = "PART_ListGame", Type = typeof(GamesGridView))]
     public class LibraryListView : Control
     {
         internal readonly DesktopAppViewModel mainModel;
@@ -70,7 +70,7 @@ namespace Playnite.DesktopApp.Controls.Views
         {
             base.OnApplyTemplate();
 
-            ListGames = Template.FindName("PART_ListGames", this) as GamesGridView;
+            ListGames = Template.FindName("PART_ListGame", this) as GamesGridView;
             if (ListGames != null)
             {
                 SetListGamesBinding();

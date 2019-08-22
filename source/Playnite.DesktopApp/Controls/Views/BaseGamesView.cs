@@ -16,7 +16,8 @@ using System.Windows.Input;
 
 namespace Playnite.DesktopApp.Controls.Views
 {
-    [TemplatePart(Name = "PART_ListGames", Type = typeof(ExtendedListBox))]
+    [TemplatePart(Name = "Part_ListGames", Type = typeof(ExtendedListBox))]
+    [TemplatePart(Name = "PART_ListStore", Type = typeof(ExtendedListBox))]
     [TemplatePart(Name = "PART_ControlGameView", Type = typeof(Control))]
     public abstract class BaseGamesView : Control
     {
@@ -86,6 +87,28 @@ namespace Playnite.DesktopApp.Controls.Views
             }
 
             ListGames = Template.FindName("PART_ListGames", this) as ExtendedListBox;
+            if (ListGames != null)
+            {
+                SetListGamesBinding();
+                BindingTools.SetBinding(ListGames,
+                    ExtendedListBox.SelectedItemProperty,
+                    mainModel,
+                    nameof(DesktopAppViewModel.SelectedGame),
+                    BindingMode.TwoWay);
+                BindingTools.SetBinding(ListGames,
+                    ExtendedListBox.SelectedItemsListProperty,
+                    mainModel,
+                    nameof(DesktopAppViewModel.SelectedGamesBinder),
+                    BindingMode.TwoWay);
+
+                ScrollToSelectedBehavior.SetEnabled(ListGames, true);
+
+                ListGames.InputBindings.Add(new KeyBinding(mainModel.EditSelectedGamesCommand, mainModel.EditSelectedGamesCommand.Gesture));
+                ListGames.InputBindings.Add(new KeyBinding(mainModel.RemoveSelectedGamesCommand, mainModel.RemoveSelectedGamesCommand.Gesture));
+                ListGames.InputBindings.Add(new KeyBinding(mainModel.StartSelectedGameCommand, mainModel.StartSelectedGameCommand.Gesture));
+            }
+
+            ListGames = Template.FindName("PART_ListStore", this) as ExtendedListBox;
             if (ListGames != null)
             {
                 SetListGamesBinding();
