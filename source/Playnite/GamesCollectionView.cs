@@ -36,6 +36,24 @@ namespace Playnite
             }
         }
 
+        public ListCollectionView StoreCollectionView
+        {
+            get
+            {
+                return (ListCollectionView)CollectionViewSource.GetDefaultView(
+                    new RangeObservableCollection<GamesCollectionViewEntry>()
+                    {
+                        new GamesCollectionViewEntry(new Game("Test Game")
+                        {
+                            Description = "Testing",
+                            CoverImage = "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/SuperMarioGalaxy.jpg/220px-SuperMarioGalaxy.jpg",
+                            BackgroundImage = "https://staticr1.blastingcdn.com/media/photogallery/2018/2/3/660x290/b_502x220/the-best-title-screens-in-gaming-image-credit-youtubeskg-20_1829387.jpg"
+                        },
+                        null, null)
+                    });
+            }
+        }
+
         public BaseCollectionView(IGameDatabase database, ExtensionFactory extensions, FilterSettings filterSettings)
         {
             Database = database;

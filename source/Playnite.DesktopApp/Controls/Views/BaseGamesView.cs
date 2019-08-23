@@ -26,6 +26,7 @@ namespace Playnite.DesktopApp.Controls.Views
 
         internal Control ControlGameView;
         internal ExtendedListBox ListGames;
+        internal ExtendedListBox ListStore;
 
         public BaseGamesView(ViewType viewType) : this(viewType, DesktopApplication.Current?.MainModel)
         {
@@ -54,6 +55,11 @@ namespace Playnite.DesktopApp.Controls.Views
                 {
                     SetListGamesBinding();
                 }
+
+                if (ListStore != null)
+                {
+                    SetListStoreBinding();
+                }
             }
         }
 
@@ -73,7 +79,23 @@ namespace Playnite.DesktopApp.Controls.Views
             }
         }
 
-        public override void OnApplyTemplate()
+        private void SetListStoreBinding()
+        {
+            if (mainModel.AppSettings.ViewSettings.GamesViewType == viewType ||
+                DesignerProperties.GetIsInDesignMode(this))
+            {
+                BindingTools.SetBinding(ListStore,
+                    ExtendedListBox.ItemsSourceProperty,
+                    mainModel,
+                    $"{nameof(mainModel.GamesView)}.{nameof(DesktopCollectionView.StoreCollectionView)}");
+            }
+            else
+            {
+                ListStore.ItemsSource = null;
+            }
+        }
+
+    public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
@@ -108,26 +130,26 @@ namespace Playnite.DesktopApp.Controls.Views
                 ListGames.InputBindings.Add(new KeyBinding(mainModel.StartSelectedGameCommand, mainModel.StartSelectedGameCommand.Gesture));
             }
 
-            ListGames = Template.FindName("PART_ListStore", this) as ExtendedListBox;
-            if (ListGames != null)
+            ListStore = Template.FindName("PART_ListStore", this) as ExtendedListBox;
+            if (ListStore != null)
             {
-                SetListGamesBinding();
-                BindingTools.SetBinding(ListGames,
+                SetListStoreBinding();
+                BindingTools.SetBinding(ListStore,
                     ExtendedListBox.SelectedItemProperty,
                     mainModel,
                     nameof(DesktopAppViewModel.SelectedGame),
                     BindingMode.TwoWay);
-                BindingTools.SetBinding(ListGames,
+                BindingTools.SetBinding(ListStore,
                     ExtendedListBox.SelectedItemsListProperty,
                     mainModel,
                     nameof(DesktopAppViewModel.SelectedGamesBinder),
                     BindingMode.TwoWay);
 
-                ScrollToSelectedBehavior.SetEnabled(ListGames, true);
+                ScrollToSelectedBehavior.SetEnabled(ListStore, true);
 
-                ListGames.InputBindings.Add(new KeyBinding(mainModel.EditSelectedGamesCommand, mainModel.EditSelectedGamesCommand.Gesture));
-                ListGames.InputBindings.Add(new KeyBinding(mainModel.RemoveSelectedGamesCommand, mainModel.RemoveSelectedGamesCommand.Gesture));
-                ListGames.InputBindings.Add(new KeyBinding(mainModel.StartSelectedGameCommand, mainModel.StartSelectedGameCommand.Gesture));
+                //ListStore.InputBindings.Add(new KeyBinding(mainModel.EditSelectedGamesCommand, mainModel.EditSelectedGamesCommand.Gesture));
+                //ListStore.InputBindings.Add(new KeyBinding(mainModel.RemoveSelectedGamesCommand, mainModel.RemoveSelectedGamesCommand.Gesture));
+                //ListStore.InputBindings.Add(new KeyBinding(mainModel.StartSelectedGameCommand, mainModel.StartSelectedGameCommand.Gesture));
             }
         }
     } 
