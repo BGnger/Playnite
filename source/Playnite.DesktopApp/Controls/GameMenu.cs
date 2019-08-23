@@ -97,7 +97,7 @@ namespace Playnite.DesktopApp.Controls
         }
 
         public GameMenu() : this(DesktopApplication.Current?.MainModel)
-        {            
+        {
         }
 
         public GameMenu(DesktopAppViewModel model)
@@ -225,8 +225,8 @@ namespace Playnite.DesktopApp.Controls
                 };
 
                 Items.Add(unFavoriteItem);
-                
-                
+
+
 
                 // Set Hide
                 var hideItem = new MenuItem()
@@ -310,7 +310,7 @@ namespace Playnite.DesktopApp.Controls
                     {
                         var installItem = new MenuItem()
                         {
-                            Header = resources.GetString("LOCBuyGameLong") + " " + Game.PlayAction.Store + " for $" + Game.PlayAction.Price,
+                            Header = $"{resources.GetString("LOCBuyGameLong")} {Game.PlayAction.Store} {resources.GetString("LOCBuyGamePrice")} {Game.PlayAction.Price}",
                             Icon = buyIcon,
                             FontWeight = FontWeights.Bold,
                             Command = model.BuyGameCommand,
@@ -355,7 +355,7 @@ namespace Playnite.DesktopApp.Controls
 
                         if (Game.IsStoreItem)
                         {
-                            taskItem.Header = resources.GetString("LOCBuyGameLong") + " " + task.Store + resources.GetString("LOCBuyGamePrice") + " $" + task.Price;
+                            taskItem.Header = $"{resources.GetString("LOCBuyGameLong")} {task.Store} {resources.GetString("LOCBuyGamePrice")} {task.Price}";
                         }
 
                         taskItem.Click += (s, e) =>
@@ -386,8 +386,8 @@ namespace Playnite.DesktopApp.Controls
                             Command = Commands.GlobalCommands.NavigateUrlCommand,
                             CommandParameter = link.Url
                         });
-                    }     
-                    
+                    }
+
                     Items.Add(linksItem);
                     Items.Add(new Separator());
                 }
@@ -464,10 +464,10 @@ namespace Playnite.DesktopApp.Controls
                     Command = model.AssignGameCategoryCommand,
                     CommandParameter = Game
                 };
-                
+
                 Items.Add(categoryItem);
                 Items.Add(new Separator());
-                
+
                 // Remove
                 var removeItem = new MenuItem()
                 {
@@ -477,11 +477,11 @@ namespace Playnite.DesktopApp.Controls
                     CommandParameter = Game,
                     InputGestureText = model.RemoveGameCommand.GestureText
                 };
-                
+
                 Items.Add(removeItem);
 
                 if(!Game.IsStoreItem)
-                { 
+                {
                     // Uninstall
                     if (!Game.IsCustomGame && Game.IsInstalled)
                     {

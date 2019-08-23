@@ -24,6 +24,9 @@ using System.Windows.Input;
 using Playnite.ViewModels;
 using Playnite.DesktopApp.Windows;
 using System.Windows.Controls;
+using HtmlAgilityPack;
+using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Playnite.DesktopApp.ViewModels
 {
@@ -1218,35 +1221,10 @@ namespace Playnite.DesktopApp.ViewModels
 
         public void SelectGame(Guid id)
         {
-            Database.Games.Remove(Database.Games.Where(G => G.Name == "Test Game"));
             var viewEntry = GamesView.Items.FirstOrDefault(a => a.Game.Id == id);
-            Game game = new Game("Test Game");
-            game.Description = "Testing";
-            game.CoverImage = "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/SuperMarioGalaxy.jpg/220px-SuperMarioGalaxy.jpg";
-            game.BackgroundImage = "https://staticr1.blastingcdn.com/media/photogallery/2018/2/3/660x290/b_502x220/the-best-title-screens-in-gaming-image-credit-youtubeskg-20_1829387.jpg";
-            GameAction gameAction = new GameAction();
-            gameAction.Store = "Steam";
-            gameAction.Price = 19.99f;
-            gameAction.Type = GameActionType.URL;
-            gameAction.Path = "https://store.steampowered.com/app/726830/Vacation_Simulator/";
-            game.PlayAction = gameAction;
-            
-            game.IsStoreItem = true;
-            Database.Games.Add(game);
-            game.OtherActions = new ObservableCollection<GameAction>
-            {
-                new GameAction
-                {
-                    Store= "Uplay",
-                    Price = 29.99f,
-                    Type = GameActionType.URL,
-                    Path = "https://store.ubi.com/us/watch-dogs-legion-ultimate-edition/5cec2d9939798c0870c0769a.html?lang=en"
-                }
-            };
-            GamesCollectionViewEntry gcve = new GamesCollectionViewEntry(game, null, null);
-            SelectedGame = gcve;
-            
+            SelectedGame = viewEntry;
         }
+
 
         protected virtual void OnClosing(CancelEventArgs args)
         {
