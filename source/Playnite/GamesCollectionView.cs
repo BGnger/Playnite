@@ -13,6 +13,7 @@ using Playnite.SDK;
 using Playnite.Settings;
 using Playnite.Plugins;
 using Playnite.SDK.Plugins;
+using Playnite.Common.Web;
 
 namespace Playnite
 {
@@ -36,21 +37,24 @@ namespace Playnite
             }
         }
 
+        private ListCollectionView storeCollectionView;
         public ListCollectionView StoreCollectionView
         {
             get
             {
-                return (ListCollectionView)CollectionViewSource.GetDefaultView(
-                    new RangeObservableCollection<GamesCollectionViewEntry>()
-                    {
-                        new GamesCollectionViewEntry(new Game("Test Game")
-                        {
-                            Description = "Testing",
-                            CoverImage = "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/SuperMarioGalaxy.jpg/220px-SuperMarioGalaxy.jpg",
-                            BackgroundImage = "https://staticr1.blastingcdn.com/media/photogallery/2018/2/3/660x290/b_502x220/the-best-title-screens-in-gaming-image-credit-youtubeskg-20_1829387.jpg"
-                        },
-                        null, null)
-                    });
+                return storeCollectionView;
+                //List<Game> games = WebScraper.SearchForGame("Skyrim");
+
+                //var retval = new ListCollectionView(new RangeObservableCollection<GamesCollectionViewEntry>());
+
+                //games.ForEach(g => retval.AddNewItem(new GamesCollectionViewEntry(g, null, null)));
+
+                //return retval;
+            }
+            private set
+            {
+                storeCollectionView = value;
+                OnPropertyChanged();
             }
         }
 
@@ -63,6 +67,15 @@ namespace Playnite
             filterSettings.FilterChanged += FilterSettings_FilterChanged;
             CollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(Items);
             CollectionView.Filter = Filter;
+
+            //stuff i added
+            //List<Game> storeGames = WebScraper.SearchForGame("Skyrim");
+            List<Game> storeGames = new List<Game>();
+            var storeGamesEntries = new ListCollectionView(new RangeObservableCollection<GamesCollectionViewEntry>());
+
+            storeGames.ForEach(g => storeGamesEntries.AddNewItem(new GamesCollectionViewEntry(g, null, null)));
+
+            storeCollectionView = storeGamesEntries;
         }
 
         public virtual void Dispose()
