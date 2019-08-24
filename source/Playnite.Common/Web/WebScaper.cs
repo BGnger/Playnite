@@ -130,7 +130,7 @@ namespace Playnite.Common.Web
                 if (combinedResults.ContainsKey(item.Name))
                 {
                     combinedResults[item.Name].OtherActions.Add(new GameAction() {Store = item.PlayAction.Store, Path = item.PlayAction.Path });
-                    
+
                 }
                 else
                 {
