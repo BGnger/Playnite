@@ -11,14 +11,24 @@ using Playnite.SDK.Models;
 
 namespace Playnite.Common.Web
 {
-    class WebScaper
+    public class WebScraper
     {
         public static List<Game> SearchForGame(string searchTerm)
         {
-            var results = new List<Game>();
-            results.AddRange(SearchSteam(searchTerm));
-            results.AddRange(SearchUplay(searchTerm));
-            return SortListOnRelavance(results, searchTerm);
+            //var results = new List<Game>();
+            //var testList = new List<Game>();
+            //testList.AddRange(SearchSteam(searchTerm));
+            //testList.AddRange(SearchUplay(searchTerm));
+            //return SortListOnRelavance(testList, searchTerm);
+            //return results;
+
+            return new List<Game>()
+            {
+                new Game("Test")
+                {
+                    Description = "testing"
+                }
+            };
         }
 
         private static HtmlWeb web = new HtmlWeb();
@@ -40,7 +50,7 @@ namespace Playnite.Common.Web
                             Store = "Steam",
                             Path = result.Attributes["href"].Value
                         }
-                    })
+                    });
 
                 }
             }
@@ -109,7 +119,9 @@ namespace Playnite.Common.Web
             {
                 // find the relevance value based on search string
                 int count = Regex.Matches(Regex.Escape(item.Name.ToLower()), search.ToLower()).Count;
+                //
                 newList.Insert(count, item);
+                //
             }
 
             Dictionary<string, Game> combinedResults = new Dictionary<string, Game>();
@@ -118,7 +130,7 @@ namespace Playnite.Common.Web
                 if (combinedResults.ContainsKey(item.Name))
                 {
                     combinedResults[item.Name].OtherActions.Add(new GameAction() {Store = item.PlayAction.Store, Path = item.PlayAction.Path });
-                    
+
                 }
                 else
                 {
