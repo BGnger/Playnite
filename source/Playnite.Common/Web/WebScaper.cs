@@ -12,17 +12,34 @@ using Playnite.SDK.Models;
 
 namespace Playnite.Common.Web
 {
-    class WebScaper
+    public class WebScraper
     {
         private static string GogSearchApiUrl = @"http://embed.gog.com/games/ajax/filtered?limit=10&mediaType=game&search=";
 
         public static List<Game> SearchForGame(string searchTerm)
         {
+<<<<<<< HEAD
             var results = new List<Game>();
             results.AddRange(SearchSteam(searchTerm));
             results.AddRange(SearchUplay(searchTerm));
             results.AddRange(SearchGOG(searchTerm));
             return SortListOnRelavance(results, searchTerm);
+=======
+            //var results = new List<Game>();
+            //var testList = new List<Game>();
+            //testList.AddRange(SearchSteam(searchTerm));
+            //testList.AddRange(SearchUplay(searchTerm));
+            //return SortListOnRelavance(testList, searchTerm);
+            //return results;
+
+            return new List<Game>()
+            {
+                new Game("Test")
+                {
+                    Description = "testing"
+                }
+            };
+>>>>>>> 5ffd6496b4c668bd9eb806c9aa43c95cf2e1cee2
         }
 
         private static HtmlWeb web = new HtmlWeb();
@@ -148,7 +165,9 @@ namespace Playnite.Common.Web
             {
                 // find the relevance value based on search string
                 int count = Regex.Matches(Regex.Escape(item.Name.ToLower()), search.ToLower()).Count;
+                //
                 newList.Insert(count, item);
+                //
             }
 
             Dictionary<string, Game> combinedResults = new Dictionary<string, Game>();
@@ -157,7 +176,7 @@ namespace Playnite.Common.Web
                 if (combinedResults.ContainsKey(item.Name))
                 {
                     combinedResults[item.Name].OtherActions.Add(new GameAction() {Store = item.PlayAction.Store, Path = item.PlayAction.Path });
-                    
+
                 }
                 else
                 {
