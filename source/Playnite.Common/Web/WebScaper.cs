@@ -7,21 +7,60 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 using Playnite.SDK.Models;
 
 namespace Playnite.Common.Web
 {
     class WebScaper
     {
+        private static string GogSearchApiUrl = @"http://embed.gog.com/games/ajax/filtered?limit=10&mediaType=game&search=";
+
         public static List<Game> SearchForGame(string searchTerm)
         {
             var results = new List<Game>();
             results.AddRange(SearchSteam(searchTerm));
             results.AddRange(SearchUplay(searchTerm));
+            results.AddRange(SearchGOG(searchTerm));
             return SortListOnRelavance(results, searchTerm);
         }
 
         private static HtmlWeb web = new HtmlWeb();
+
+        private static List<Game> SearchGOG(string searchTerm)
+        {
+            List<Game> requestValue = new List<Game>();
+            var validUrlQuery = searchTerm.Replace(" ", "%20");
+            GogSearchApiUrl = $"{GogSearchApiUrl}{validUrlQuery}";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(GogSearchApiUrl);
+            request.Method = "GET";
+            using (var response = (HttpWebResponse)request.GetResponse())
+            {
+                var stream = response.GetResponseStream();
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    JObject gogRequestJson = JObject.Parse(reader.ReadToEnd());
+                    foreach (var product in gogRequestJson["products"])
+                    {
+                        String price = product["price"]["amount"].ToString();
+                        //price = price.Contains("0.00") ? "Free" : price;
+                        Game game = new Game()
+                        {
+                            Name = product["title"].ToString(),
+                            PlayAction = new GameAction()
+                            {
+                                Price = price,
+                                Store = "GOG",
+                                Path = $"http://www.gog.com{product["url"]}"
+                            }
+                        };
+                        requestValue.Add(game);
+                    }
+                }
+            }
+            return requestValue;
+        }
+
         private static List<Game> SearchSteam(string term)
         {
             var games = new List<Game>();
@@ -40,7 +79,7 @@ namespace Playnite.Common.Web
                             Store = "Steam",
                             Path = result.Attributes["href"].Value
                         }
-                    })
+                    });
 
                 }
             }
