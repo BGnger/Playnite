@@ -97,7 +97,7 @@ namespace Playnite.DesktopApp.Controls
         }
 
         public GameMenu() : this(DesktopApplication.Current?.MainModel)
-        {            
+        {
         }
 
         public GameMenu(DesktopAppViewModel model)
@@ -225,8 +225,8 @@ namespace Playnite.DesktopApp.Controls
                 };
 
                 Items.Add(unFavoriteItem);
-                
-                
+
+
 
                 // Set Hide
                 var hideItem = new MenuItem()
@@ -386,8 +386,8 @@ namespace Playnite.DesktopApp.Controls
                             Command = Commands.GlobalCommands.NavigateUrlCommand,
                             CommandParameter = link.Url
                         });
-                    }     
-                    
+                    }
+
                     Items.Add(linksItem);
                     Items.Add(new Separator());
                 }
@@ -406,53 +406,55 @@ namespace Playnite.DesktopApp.Controls
                     Items.Add(locationItem);
                 }
 
-                // Create Desktop Shortcut
-                var shortcutItem = new MenuItem()
-                {
-                    Header = resources.GetString("LOCCreateDesktopShortcut"),
-                    Icon = shortcutIcon,
-                    Command = model.CreateGameShortcutCommand,
-                    CommandParameter = Game
-                };
-
-                Items.Add(shortcutItem);
-                Items.Add(new Separator());
-
-                // Toggle Favorites
-                var favoriteItem = new MenuItem()
-                {
-                    Header = Game.Favorite ? resources.GetString("LOCRemoveFavoriteGame") : resources.GetString("LOCFavoriteGame"),
-                    Icon = Game.Favorite ? unFavoriteIcon : favoriteIcon,
-                    Command = model.ToggleFavoritesCommand,
-                    CommandParameter = Game                    
-                };
-
-                Items.Add(favoriteItem);
                 if (!Game.IsStoreItem)
                 {
+                    // Create Desktop Shortcut
+                    var shortcutItem = new MenuItem()
+                    {
+                        Header = resources.GetString("LOCCreateDesktopShortcut"),
+                        Icon = shortcutIcon,
+                        Command = model.CreateGameShortcutCommand,
+                        CommandParameter = Game
+                    };
 
-                // Toggle Hide
-                var hideItem = new MenuItem()
-                {
-                    Header = Game.Hidden ? resources.GetString("LOCUnHideGame") : resources.GetString("LOCHideGame"),
-                    Icon = Game.Hidden ? unHideIcon : hideIcon,
-                    Command = model.ToggleVisibilityCommand,
-                    CommandParameter = Game
-                };
 
-                Items.Add(hideItem);
+                    Items.Add(shortcutItem);
+                    Items.Add(new Separator());
 
-                // Edit
-                var editItem = new MenuItem()
-                {
-                    Header = resources.GetString("LOCEditGame"),
-                    Icon = editIcon,
-                    Command = model.EditGameCommand,
-                    CommandParameter = Game,
-                    InputGestureText = model.EditSelectedGamesCommand.GestureText
-                };
+                    // Toggle Favorites
+                    var favoriteItem = new MenuItem()
+                    {
+                        Header = Game.Favorite ? resources.GetString("LOCRemoveFavoriteGame") : resources.GetString("LOCFavoriteGame"),
+                        Icon = Game.Favorite ? unFavoriteIcon : favoriteIcon,
+                        Command = model.ToggleFavoritesCommand,
+                        CommandParameter = Game
+                    };
 
-                Items.Add(editItem);
+                    Items.Add(favoriteItem);
+
+                    // Toggle Hide
+                    var hideItem = new MenuItem()
+                    {
+                        Header = Game.Hidden ? resources.GetString("LOCUnHideGame") : resources.GetString("LOCHideGame"),
+                        Icon = Game.Hidden ? unHideIcon : hideIcon,
+                        Command = model.ToggleVisibilityCommand,
+                        CommandParameter = Game
+                    };
+
+                    Items.Add(hideItem);
+
+                    // Edit
+                    var editItem = new MenuItem()
+                    {
+                        Header = resources.GetString("LOCEditGame"),
+                        Icon = editIcon,
+                        Command = model.EditGameCommand,
+                        CommandParameter = Game,
+                        InputGestureText = model.EditSelectedGamesCommand.GestureText
+                    };
+
+                    Items.Add(editItem);
+                }
 
                 // Set Category
                 var categoryItem = new MenuItem()
@@ -465,7 +467,7 @@ namespace Playnite.DesktopApp.Controls
 
                 Items.Add(categoryItem);
                 Items.Add(new Separator());
-                
+
                 // Remove
                 var removeItem = new MenuItem()
                 {
@@ -478,19 +480,21 @@ namespace Playnite.DesktopApp.Controls
 
                 Items.Add(removeItem);
 
-                // Uninstall
-                if (!Game.IsCustomGame && Game.IsInstalled)
+                if(!Game.IsStoreItem)
                 {
-                    var uninstallItem = new MenuItem()
+                    // Uninstall
+                    if (!Game.IsCustomGame && Game.IsInstalled)
                     {
-                        Header = resources.GetString("LOCUninstallGame"),
-                        //Icon = Images.GetEmptyImage(),
-                        Command = model.UninstallGameCommand,
-                        CommandParameter = Game
-                    };
+                        var uninstallItem = new MenuItem()
+                        {
+                            Header = resources.GetString("LOCUninstallGame"),
+                            //Icon = Images.GetEmptyImage(),
+                            Command = model.UninstallGameCommand,
+                            CommandParameter = Game
+                        };
 
-                    Items.Add(uninstallItem);
-                }
+                        Items.Add(uninstallItem);
+                    }
                 }
             }
         }

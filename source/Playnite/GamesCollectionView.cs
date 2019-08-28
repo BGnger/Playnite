@@ -13,6 +13,7 @@ using Playnite.SDK;
 using Playnite.Settings;
 using Playnite.Plugins;
 using Playnite.SDK.Plugins;
+using Playnite.Common.Web;
 
 namespace Playnite
 {
@@ -36,6 +37,27 @@ namespace Playnite
             }
         }
 
+        private ListCollectionView storeCollectionView;
+        public ListCollectionView StoreCollectionView
+        {
+            get
+            {
+                return storeCollectionView;
+                //List<Game> games = WebScraper.SearchForGame("Skyrim");
+
+                //var retval = new ListCollectionView(new RangeObservableCollection<GamesCollectionViewEntry>());
+
+                //games.ForEach(g => retval.AddNewItem(new GamesCollectionViewEntry(g, null, null)));
+
+                //return retval;
+            }
+            private set
+            {
+                storeCollectionView = value;
+                OnPropertyChanged();
+            }
+        }
+
         public BaseCollectionView(IGameDatabase database, ExtensionFactory extensions, FilterSettings filterSettings)
         {
             Database = database;
@@ -45,6 +67,15 @@ namespace Playnite
             filterSettings.FilterChanged += FilterSettings_FilterChanged;
             CollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(Items);
             CollectionView.Filter = Filter;
+
+            //stuff i added
+            //List<Game> storeGames = WebScraper.SearchForGame("Skyrim");
+            List<Game> storeGames = new List<Game>();
+            var storeGamesEntries = new ListCollectionView(new RangeObservableCollection<GamesCollectionViewEntry>());
+
+            storeGames.ForEach(g => storeGamesEntries.AddNewItem(new GamesCollectionViewEntry(g, null, null)));
+
+            storeCollectionView = storeGamesEntries;
         }
 
         public virtual void Dispose()
