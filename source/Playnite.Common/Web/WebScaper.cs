@@ -16,12 +16,50 @@ namespace Playnite.Common.Web
         public static List<Game> SearchForGame(string searchTerm)
         {
             var results = new List<Game>();
-            results.AddRange(SearchSteam(searchTerm));
+            var steamItems = SearchSteam(searchTerm);
+            results.AddRange(steamItems);
             results.AddRange(SearchUplay(searchTerm));
             return SortListOnRelavance(results, searchTerm);
         }
 
         private static HtmlWeb web = new HtmlWeb();
+
+        private static List<Game> SearchGOG(string searchTerm)
+        {
+            List<Game> requestValue = new List<Game>();
+            var validUrlQuery = searchTerm.Replace(" ", "%20");
+            GogSearchApiUrl = $"{GogSearchApiUrl}{validUrlQuery}";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(GogSearchApiUrl);
+            request.Method = "GET";
+            using (var response = (HttpWebResponse)request.GetResponse())
+            {
+                var stream = response.GetResponseStream();
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    JObject gogRequestJson = JObject.Parse(reader.ReadToEnd());
+                    foreach (var product in gogRequestJson["products"])
+                    {
+                        String price = (product["price"]["symbol"].ToString() + product["price"]["amount"].ToString());
+                        //price = price.Contains("0.00") ? "Free" : price;
+                        Game game = new Game()
+                        {
+                            Name = product["title"].ToString(),
+                            IsStoreItem = true,
+                            PlayAction = new GameAction()
+                            {
+                                Type = GameActionType.URL,
+                                Price = price,
+                                Store = "GOG",
+                                Path = $"http://www.gog.com{product["url"]}"
+                            }
+                        };
+                        requestValue.Add(game);
+                    }
+                }
+            }
+            return requestValue;
+        }
+
         private static List<Game> SearchSteam(string term)
         {
             var games = new List<Game>();
@@ -35,6 +73,7 @@ namespace Playnite.Common.Web
                     games.Add(new Game()
                     {
                         Name = result.Descendants("span").First().InnerText,
+                        IsStoreItem = true,
                         PlayAction = new GameAction()
                         {
                             Store = "Steam",
@@ -92,8 +131,10 @@ namespace Playnite.Common.Web
                     games.Add(new Game()
                     {
                         Name = result.Descendants("h2").First().InnerText.Replace("\n", "").Replace("\t", ""),
+                        IsStoreItem = true,
                         PlayAction = new GameAction()
                         {
+                            Type = GameActionType.URL,
                             Store = "Uplay",
                             Path = "https://store.ubi.com" + result.Descendants("div").Skip(1).First().Descendants("a").First().Attributes["data-link"].Value
                         }
@@ -105,34 +146,32 @@ namespace Playnite.Common.Web
         }
         private static List<Game> SortListOnRelavance(List<Game> list, string search)
         {
-            var newList = new List<Game>();
-            foreach (var item in list)
-            {
-                // find the relevance value based on search string
-                int count = Regex.Matches(Regex.Escape(item.Name.ToLower()), search.ToLower()).Count;
-                newList.Insert(count, item);
-            }
+            //Store name to relative count in dictionary
+            Dictionary<string, List<int>> distinctGames = new Dictionary<string, List<int>>();
 
-            Dictionary<string, Game> combinedResults = new Dictionary<string, Game>();
-            foreach (var item in newList)
+            for (int i=0; i<list.Count; i++)
             {
-                if (combinedResults.ContainsKey(item.Name))
+                Game game = list[i];
+                // find the relevance value based on search string
+                if (!distinctGames.ContainsKey(game.Name))
                 {
-                    if(combinedResults[item.Name].OtherActions == null)
-                    {
-                        combinedResults[item.Name].OtherActions = new System.Collections.ObjectModel.ObservableCollection<GameAction>();
-                    }
-                    combinedResults[item.Name].OtherActions.Add(new GameAction() {Store = item.PlayAction.Store, Path = item.PlayAction.Path });
-                    
+                    distinctGames.Add(game.Name, new List<int>());
                 }
-                else
-                {
-                    combinedResults.Add(item.Name, item);
-                }
+                distinctGames[game.Name].Add(i);
             }
-            var combinedList = new List<Game>();
-            combinedResults.ToList().ForEach(r => combinedList.Add(r.Value));
-            return combinedList;
+            List<Game> CombinedGames = new List<Game>();
+            foreach (var distinctGame in distinctGames)
+            {
+                Game combinedGame = list[distinctGame.Value[0]];
+                for (int i = 1; i < distinctGame.Value.Count; i++)
+                {
+                    int index = distinctGame.Value[i];
+                    if (combinedGame.OtherActions == null) combinedGame.OtherActions = new System.Collections.ObjectModel.ObservableCollection<GameAction>();
+                    combinedGame.OtherActions.Add(list[index].PlayAction);
+                }
+                CombinedGames.Add(combinedGame);
+            }
+            return CombinedGames;
         }
     }
 }
