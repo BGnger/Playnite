@@ -84,6 +84,7 @@ namespace Playnite.Common.Web
             var html = @"https://store.ubi.com/us/search/?q=" + term + "&prefn1=productTypeCategoryRefinementString&prefv1=Video%20Game&lang=en_US#q=" + term + "&prefn1=productEditionString&prefv1=Standard&prefn2=productTypeCategoryRefinementString&prefv2=Video%20Game";
             var htmlDoc = web.Load(html);
             var results = htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\"search-result-items\"]");
+            if (results == null) return games;
             foreach (var result in results.ChildNodes)
             {
                 if (result.Name == "li")

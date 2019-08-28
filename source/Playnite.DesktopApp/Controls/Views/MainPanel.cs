@@ -86,6 +86,7 @@ namespace Playnite.DesktopApp.Controls.Views
             }
 
             TextMainSearch = Template.FindName("PART_TextMainSearch", this) as SearchBox;
+            TextMainSearch.mainModel = mainModel;
             if (TextMainSearch != null)
             {
                 BindingTools.SetBinding(TextMainSearch,

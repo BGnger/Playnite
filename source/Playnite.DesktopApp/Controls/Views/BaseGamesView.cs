@@ -26,7 +26,7 @@ namespace Playnite.DesktopApp.Controls.Views
 
         internal Control ControlGameView;
         internal ExtendedListBox ListGames;
-        internal ExtendedListBox ListStore;
+        public ExtendedListBox ListStore;
 
         public BaseGamesView(ViewType viewType) : this(viewType, DesktopApplication.Current?.MainModel)
         {
@@ -42,7 +42,7 @@ namespace Playnite.DesktopApp.Controls.Views
             {
                 this.mainModel = mainModel;
             }
-
+            
             this.viewType = viewType;
             this.mainModel.AppSettings.ViewSettings.PropertyChanged += ViewSettings_PropertyChanged;
         }

@@ -14,6 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Playnite.Common.Web;
+using Playnite.DesktopApp.Controls.Views;
+using Playnite;
+using Playnite.DesktopApp.ViewModels;
 
 namespace Playnite.DesktopApp.Controls
 {
@@ -25,6 +28,7 @@ namespace Playnite.DesktopApp.Controls
         private int oldCarret;
         private bool ignoreTextCallback;
         internal IInputElement previousFocus;
+        public  DesktopAppViewModel mainModel;
 
         public string Text
         {
@@ -100,8 +104,12 @@ namespace Playnite.DesktopApp.Controls
                 ClearFocus();
                 if(e.Key == Key.Enter)
                 {
-                    var test = WebScaper.SearchForGame(Text);
-
+                    
+                    var storeGames = WebScaper.SearchForGame(Text);
+                    var gameEntries = storeGames.Select(g => new GamesCollectionViewEntry(g, null, null));
+                    mainModel.GamesView.StoreItems.Clear();
+                    mainModel.GamesView.StoreItems.AddRange(gameEntries);
+                    mainModel.GamesView.StoreCollectionView.Refresh();
                 }
             }
         }

@@ -37,6 +37,8 @@ namespace Playnite
             }
         }
 
+        public RangeObservableCollection<GamesCollectionViewEntry> StoreItems { get; private set; }
+
         private ListCollectionView storeCollectionView;
         public ListCollectionView StoreCollectionView
         {
@@ -51,7 +53,7 @@ namespace Playnite
 
                 //return retval;
             }
-            private set
+            set
             {
                 storeCollectionView = value;
                 OnPropertyChanged();
@@ -67,15 +69,8 @@ namespace Playnite
             filterSettings.FilterChanged += FilterSettings_FilterChanged;
             CollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(Items);
             CollectionView.Filter = Filter;
-
-            //stuff i added
-            //List<Game> storeGames = WebScraper.SearchForGame("Skyrim");
-            List<Game> storeGames = new List<Game>();
-            var storeGamesEntries = new ListCollectionView(new RangeObservableCollection<GamesCollectionViewEntry>());
-
-            storeGames.ForEach(g => storeGamesEntries.AddNewItem(new GamesCollectionViewEntry(g, null, null)));
-
-            storeCollectionView = storeGamesEntries;
+            StoreItems = new RangeObservableCollection<GamesCollectionViewEntry>();
+            storeCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(StoreItems);
         }
 
         public virtual void Dispose()
