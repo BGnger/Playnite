@@ -11,7 +11,7 @@ using Playnite.SDK.Models;
 
 namespace Playnite.Common.Web
 {
-    class WebScaper
+    public class WebScaper
     {
         public static List<Game> SearchForGame(string searchTerm)
         {
@@ -40,7 +40,7 @@ namespace Playnite.Common.Web
                             Store = "Steam",
                             Path = result.Attributes["href"].Value
                         }
-                    })
+                    });
 
                 }
             }
@@ -117,6 +117,10 @@ namespace Playnite.Common.Web
             {
                 if (combinedResults.ContainsKey(item.Name))
                 {
+                    if(combinedResults[item.Name].OtherActions == null)
+                    {
+                        combinedResults[item.Name].OtherActions = new System.Collections.ObjectModel.ObservableCollection<GameAction>();
+                    }
                     combinedResults[item.Name].OtherActions.Add(new GameAction() {Store = item.PlayAction.Store, Path = item.PlayAction.Path });
                     
                 }
