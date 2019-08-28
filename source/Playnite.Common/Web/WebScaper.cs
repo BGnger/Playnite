@@ -7,22 +7,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
 using Playnite.SDK.Models;
 
 namespace Playnite.Common.Web
 {
-    public class WebScraper
+    public class WebScaper
     {
-        private static string GogSearchApiUrl = @"http://embed.gog.com/games/ajax/filtered?limit=10&mediaType=game&search=";
-
         public static List<Game> SearchForGame(string searchTerm)
         {
             var results = new List<Game>();
             var steamItems = SearchSteam(searchTerm);
             results.AddRange(steamItems);
             results.AddRange(SearchUplay(searchTerm));
-            results.AddRange(SearchGOG(searchTerm));
             return SortListOnRelavance(results, searchTerm);
         }
 

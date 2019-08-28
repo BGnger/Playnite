@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Playnite.Common.Web;
 
 namespace Playnite.DesktopApp.Controls
 {
@@ -93,9 +94,15 @@ namespace Playnite.DesktopApp.Controls
 
         private void TextFilter_KeyUp(object sender, KeyEventArgs e)
         {
+            
             if (e.Key == Key.Escape || e.Key == Key.Enter)
             {
                 ClearFocus();
+                if(e.Key == Key.Enter)
+                {
+                    var test = WebScaper.SearchForGame(Text);
+
+                }
             }
         }
 
