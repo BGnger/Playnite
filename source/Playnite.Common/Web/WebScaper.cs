@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 using Playnite.SDK.Models;
 
 namespace Playnite.Common.Web
@@ -19,6 +20,7 @@ namespace Playnite.Common.Web
             var steamItems = SearchSteam(searchTerm);
             results.AddRange(steamItems);
             results.AddRange(SearchUplay(searchTerm));
+            results.AddRange(SearchGOG(searchTerm));
             return SortListOnRelavance(results, searchTerm);
         }
 
@@ -28,8 +30,8 @@ namespace Playnite.Common.Web
         {
             List<Game> requestValue = new List<Game>();
             var validUrlQuery = searchTerm.Replace(" ", "%20");
-            GogSearchApiUrl = $"{GogSearchApiUrl}{validUrlQuery}";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(GogSearchApiUrl);
+            validUrlQuery = $@"http://embed.gog.com/games/ajax/filtered?limit=10&mediaType=game&search={validUrlQuery}";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(validUrlQuery);
             request.Method = "GET";
             using (var response = (HttpWebResponse)request.GetResponse())
             {
@@ -63,9 +65,9 @@ namespace Playnite.Common.Web
         private static List<Game> SearchSteam(string term)
         {
             var games = new List<Game>();
-            var html = @"https://store.steampowered.com/search/?term=" + term.Replace(" ", "%20") + "&category1=998";
+            var html = @"https://store.steampowered.com/search/?term=" + term.Replace(" ", "+") + "&category1=998";
             var htmlDoc = web.Load(html);
-            var results = htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\"search_result_container\"]/div[2]");
+            var results = htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\"search_result_container\"]/div[@id=\"search_resultsRows\"]");
             foreach (var result in results.ChildNodes)
             {
                 if (result.Name == "a")
@@ -77,6 +79,7 @@ namespace Playnite.Common.Web
                         PlayAction = new GameAction()
                         {
                             Store = "Steam",
+                            Price = result.SelectSingleNode("//div[contains(concat(' ',normalize-space(@class),' '),' search_price ')]").InnerText,
                             Path = result.Attributes["href"].Value
                         }
                     });
@@ -148,16 +151,17 @@ namespace Playnite.Common.Web
         {
             //Store name to relative count in dictionary
             Dictionary<string, List<int>> distinctGames = new Dictionary<string, List<int>>();
-
+            String name;
             for (int i=0; i<list.Count; i++)
             {
                 Game game = list[i];
+                name = game.Name.RemoveTrademarks();
                 // find the relevance value based on search string
-                if (!distinctGames.ContainsKey(game.Name))
+                if (!distinctGames.ContainsKey(name))
                 {
-                    distinctGames.Add(game.Name, new List<int>());
+                    distinctGames.Add(name, new List<int>());
                 }
-                distinctGames[game.Name].Add(i);
+                distinctGames[name].Add(i);
             }
             List<Game> CombinedGames = new List<Game>();
             foreach (var distinctGame in distinctGames)
