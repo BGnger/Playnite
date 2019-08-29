@@ -75,11 +75,13 @@ namespace Playnite.Common.Web
                     games.Add(new Game()
                     {
                         Name = result.Descendants("span").First().InnerText,
+                        //Description = GetSteamGameDescription(result.Attributes["href"].Value),
                         IsStoreItem = true,
                         PlayAction = new GameAction()
                         {
                             Store = "Steam",
-                            Price = result.SelectSingleNode("//div[contains(concat(' ',normalize-space(@class),' '),' search_price ')]").InnerText,
+                            Type = GameActionType.URL,
+                            Price = result.SelectSingleNode(".//div[contains(concat(' ',normalize-space(@class),' '),' search_price ')]").InnerText,
                             Path = result.Attributes["href"].Value
                         }
                     });
@@ -89,7 +91,7 @@ namespace Playnite.Common.Web
             return games;
         }
 
-        private static string GetSteamGameInfo(string url)
+        private static string GetSteamGameDescription(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
@@ -109,13 +111,9 @@ namespace Playnite.Common.Web
                 string html = reader.ReadToEnd();
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
+                string description = doc.DocumentNode.SelectSingleNode(".//div[contains(concat(' ',normalize-space(@class),' '),' game_description_snippet ')]").InnerText.Replace("\t", "");
 
-
-                string name = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[7]/div[4]/div[1]/div[2]/div[2]/div[2]/div/div[3]").InnerText;
-                string price = doc.DocumentNode.SelectSingleNode("//*[@id=\"game_area_purchase\"]/div[1]/div/div[2]/div/div[1]").InnerText.Replace("\t", "");
-                string info = doc.DocumentNode.SelectSingleNode("//*[@id=\"game_area_description\"]").InnerText.Replace("\t", "");
-
-                return "Name: " + name + " price: " + price + " info: " + info;
+                return description;
             }
 
         }
@@ -139,6 +137,7 @@ namespace Playnite.Common.Web
                         {
                             Type = GameActionType.URL,
                             Store = "Uplay",
+                            Price = result.SelectSingleNode(".//div[contains(concat(' ',normalize-space(@class),' '),' product-price ')]/span[contains(concat(' ',normalize-space(@class),' '),' standard-price ')]").InnerText,
                             Path = "https://store.ubi.com" + result.Descendants("div").Skip(1).First().Descendants("a").First().Attributes["data-link"].Value
                         }
                     });
@@ -171,7 +170,8 @@ namespace Playnite.Common.Web
                 {
                     int index = distinctGame.Value[i];
                     if (combinedGame.OtherActions == null) combinedGame.OtherActions = new System.Collections.ObjectModel.ObservableCollection<GameAction>();
-                    combinedGame.OtherActions.Add(list[index].PlayAction);
+                    //if(combinedGame.PlayAction.Name != list[index].PlayAction.Name)
+                        combinedGame.OtherActions.Add(list[index].PlayAction);
                 }
                 CombinedGames.Add(combinedGame);
             }
